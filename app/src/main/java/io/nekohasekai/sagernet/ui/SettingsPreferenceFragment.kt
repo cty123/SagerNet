@@ -30,15 +30,13 @@ import androidx.preference.SwitchPreference
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.takisoft.preferencex.PreferenceFragmentCompat
 import com.takisoft.preferencex.SimpleMenuPreference
-import io.nekohasekai.sagernet.Key
-import io.nekohasekai.sagernet.R
-import io.nekohasekai.sagernet.SagerNet
-import io.nekohasekai.sagernet.TunImplementation
+import io.nekohasekai.sagernet.*
 import io.nekohasekai.sagernet.database.DataStore
 import io.nekohasekai.sagernet.database.preference.EditTextPreferenceModifiers
 import io.nekohasekai.sagernet.ktx.*
 import io.nekohasekai.sagernet.utils.Theme
 import io.nekohasekai.sagernet.widget.ColorPickerPreference
+import libcore.Libcore
 import java.io.File
 
 class SettingsPreferenceFragment : PreferenceFragmentCompat() {
@@ -222,6 +220,12 @@ class SettingsPreferenceFragment : PreferenceFragmentCompat() {
         val destinationOverride = findPreference<SwitchPreference>(Key.DESTINATION_OVERRIDE)!!
         val resolveDestination = findPreference<SwitchPreference>(Key.RESOLVE_DESTINATION)!!
         val enablePcap = findPreference<SwitchPreference>(Key.ENABLE_PCAP)!!
+        val providerRootCA = findPreference<SimpleMenuPreference>(Key.PROVIDER_ROOT_CA)!!
+        providerRootCA.setOnPreferenceChangeListener { _, newValue ->
+            Libcore.updateSystemRoots((newValue as String) == "${RootCAProvider.SYSTEM}")
+            needReload()
+            true
+        }
 
         speedInterval.onPreferenceChangeListener = reloadListener
         portSocks5.onPreferenceChangeListener = reloadListener

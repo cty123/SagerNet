@@ -33,6 +33,7 @@ import cn.hutool.json.JSONException
 import io.nekohasekai.sagernet.Action
 import io.nekohasekai.sagernet.BootReceiver
 import io.nekohasekai.sagernet.R
+import io.nekohasekai.sagernet.RootCAProvider
 import io.nekohasekai.sagernet.aidl.AppStatsList
 import io.nekohasekai.sagernet.aidl.ISagerNetService
 import io.nekohasekai.sagernet.aidl.ISagerNetServiceCallback
@@ -202,7 +203,11 @@ class BaseService {
                     }
                     AidlAppStats(
                         packageName,
-                        uid, it.tcpConn, it.udpConn, it.tcpConnTotal, it.udpConnTotal,
+                        uid,
+                        it.tcpConn,
+                        it.udpConn,
+                        it.tcpConnTotal,
+                        it.udpConnTotal,
                         it.uplink / sinceLastQueryInSeconds,
                         it.downlink / sinceLastQueryInSeconds,
                         it.uplinkTotal,
@@ -352,7 +357,9 @@ class BaseService {
         fun forceLoad() {
             if (DataStore.selectedProxy == 0L) {
                 stopRunner(false, (this as Context).getString(R.string.profile_empty))
+                return
             }
+            Libcore.updateSystemRoots(DataStore.providerRootCA == RootCAProvider.SYSTEM)
             val s = data.state
             when {
                 s == State.Stopped -> startRunner()

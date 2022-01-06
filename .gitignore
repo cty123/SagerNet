@@ -15,6 +15,7 @@ build/
 .cxx
 local.properties
 /app/libs/
-/app/src/main/assets/v2ray
+/app/src/main/assets/v2ray/
+/app/src/main/assets/root_ca_certs/
 /service_account_credentials.json
 jniLibs/
